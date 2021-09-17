@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trello Callback</title>
+</head>
+<body>
+    <h1>Trello</h1>
+    <div>
+        <h3>
+            <button onclick="onRedirect()">
+                Go to Home Page
+            </button>
+        </h3>
+        <div>
+            <p id="success"></p>
+            <p id="error"></p>
+            <p id="trelloMember"></p>
+        </div>
+
+    </div>
+    <script>
+
+        var accessToken = "ACCESS_TOKEN";
+        var error = 'ACCESS_ERROR';
+        var trelloMember = 'TRELLO_MEMBER';
+
+        function onRedirect(){
+            window.location.href = window.location.origin;
+        }
+
+        function logTokenDenyError(err){
+            var hash = location.hash.replace("#","");
+            var tokens = hash.split("&");
+            
+            if(err && err !== "ACCESS_ERROR"){
+                return err;
+            }
+
+            if(tokens && tokens.length > 0){
+                var query = {};
+                tokens.forEach(function(token){
+                    var parts = token.split("=");
+                    if(parts && parts.length > 1){
+                        query[parts[0]] = parts[1];
+                    }
+                });
+                return decodeURIComponent(query.error);
+            }
+        }
+
+         if(accessToken !== "ACCESS_TOKEN"){
+            document.getElementById("success").innerHTML = "Access Token => " + accessToken;
+            document.getElementById("trelloMember").innerHTML = "Trello data => " + trelloMember;
+        }else {
+            document.getElementById("error").innerHTML = "Trello error => " + logTokenDenyError(error);
+        }
+    </script>
+</body>
+</html>

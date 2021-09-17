@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Auth for 3rd Party</h1>
+    <div>
+      <h3>
+        <button onclick="onOAuthFlowUsingBrowserPopupClick()">
+          Trello - OAuth flow browser popup
+        </button>
+      </h3>
+      <h3>
+        <button onclick="onOAuthFlowUsingBrowserRedirectClick()">
+          Trello - OAuth flow browser redirect
+        </button>
+      </h3>
+      <h3>
+        <button onclick="onOAuthFlowUsingServerClick()">
+          Trello - OAuth flow server
+        </button>
+      </h3>
+      <h3>
+        <button onclick="onJiraOAuthFlowUsingServerClick()">
+          Jira - OAuth flow server
+        </button>
+      </h3>
+    </div>
+    <script>
+      var config = {
+        return_url: location.origin,
+        expiration: "1day",
+        name: "Trello OAuth Browser Integration",
+        scope: "read",
+        response_type: "token",
+        key: "TRELLO_API_KEY",
+        callback_method: "postMessage",
+      };
+
+      var baseURL = "https://trello.com/1/authorize";
+
+      function getPopupWindowSize() {
+        var width = 720;
+        var height = 800;
+        var left = window.screenX + (window.innerWidth - width) / 2;
+        var top = window.screenY + (window.innerHeight - height) / 2;
+        return `width=${width},height=${height},left=${left},top=${top}`;
+      }
+
+      function onPopupListener(event) {
+        var message = "";
+        if (event.source != null) {
+          event.source.close();
+        }
+
+        window.removeEventListener("message", onPopupListener, false);
+
+        if (event.data != null && /[0-9a-f]{64}/.test(event.data)) {
+          message = "Token -> " + event.data;
+        } else {
+          message = event.data;
+        }
+        console.log(message);       
+      }
+
+      function getTrelloOAuthURL(newConfig) {
+        var updatedConfig = Object.assign(
+          {},
+          config,
+          newConfig ? newConfig : {}
+        );
+        return Object.keys(updatedConfig).reduce(function (output, key) {
+          output += key + "=" + updatedConfig[key] + "&";
+          return output;
+        }, baseURL + "?");
+      }
+
+      function onOAuthFlowUsingBrowserPopupClick() {
+        window.open(getTrelloOAuthURL(), "Trello Login", getPopupWindowSize());
+        window.addEventListener("message", onPopupListener, false);
+      }
+
+      function onOAuthFlowUsingBrowserRedirectClick() {
+        window.location.href = getTrelloOAuthURL({
+          redirect_uri: location.origin,
+          callback_method: "fragment",
+        });
+      }
+
+      function onOAuthFlowUsingServerClick() {
+        window.location.href = location.origin + "/trello/login";
+      }
+
+      function onJiraOAuthFlowUsingServerClick() {
+        window.location.href = location.origin + "/jira/login";
+      }
+
+      function checkTokenAfterRedirect() {
+        var hash = location.hash.replace("#", "");
+        var tokens = hash.split("&");
+
+        if (tokens && tokens.length > 0) {
+          var query = {};
+          tokens.forEach(function (token) {
+            var parts = token.split("=");
+            if (parts && parts.length > 1) {
+              query[parts[0]] = parts[1];
+            }
+          });
+
+          onPopupListener({
+            data: query.error ? decodeURIComponent(query.error) : query.token,
+          });
+        }
+      }
+
+      function onInit() {
+        checkTokenAfterRedirect();
+      }
+
+      onInit();
+    </script>    
+  </body>
+</html>

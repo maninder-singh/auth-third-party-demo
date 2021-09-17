@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JIRA Callback</title>
+</head>
+<body>
+    <h1>Jira</h1>
+    <div>
+        <h3>
+            <button onclick="onRedirect()">
+                Go to Home Page
+            </button>
+        </h3>
+
+        <div>
+            <p id="success"></p>
+            <p id="error"></p>
+            <p id="jiraProject"></p>
+        </div>
+    </div>
+    <script>
+        var accessToken = "ACCESS_TOKEN";
+        var jiraProject = 'JIRA_PROJECT';
+        var error = 'ACCESS_ERROR';
+
+        function onRedirect(){
+            window.location.href = window.location.origin;
+        }
+
+        if(accessToken !== "ACCESS_TOKEN"){
+            document.getElementById("success").innerHTML = "Access Token => " + accessToken;
+            document.getElementById("jiraProject").innerHTML = "Jira data => " + jiraProject;
+        }else {
+            document.getElementById("error").innerHTML = "Jira error => " + error;
+        }
+    </script>
+</body>
+</html>
