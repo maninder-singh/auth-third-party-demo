@@ -4,7 +4,7 @@ Demo application for authenticate and authorize third party applications ( Trell
 
 ## setup 
 ```
-$ git clone git@github.com:maninder-singh/auth-third-party-demo.git
+$ git clone https://github.com/maninder-singh/auth-third-party-demo.git
 $ cd auth-third-party-demo
 $ npm install
 
