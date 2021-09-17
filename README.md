@@ -1,4 +1,4 @@
-#auth-third-party-demo
+# auth-third-party-demo
 
 Demo application for authenticate and authorize third party applications ( Trello and Jira )
 
